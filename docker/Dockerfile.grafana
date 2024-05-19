@@ -1,0 +1,11 @@
+FROM grafana/grafana:10.1.9
+
+COPY ./grafana/ecs/grafana.ini /etc/grafana/grafana.ini
+
+COPY ./grafana/ecs/datasource.yaml /etc/grafana/provisioning/datasources/datasource.yaml
+
+COPY ./grafana/ecs/dashboard.yaml /etc/grafana/provisioning/dashboards/dashboard.yaml
+
+COPY ./grafana/dashboards/dashboard.json /var/lib/grafana/dashboards/dashboard.json
+
+COPY ./grafana/dashboards/mlops-practice.json /var/lib/grafana/dashboards/mlops-practice.json

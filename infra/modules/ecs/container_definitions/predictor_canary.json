@@ -1,0 +1,64 @@
+[
+    {
+        "name": "predictor-canary",
+        "image": "${predictor_canary_ecr_uri}:latest",
+        "portMappings": [
+            {
+                "name": "predictor-8080-tcp",
+                "containerPort": 8080,
+                "hostPort": 8080,
+                "protocol": "tcp",
+                "appProtocol": "http"
+            }
+        ],
+        "essential": true,
+        "environment": [
+            {
+                "name": "REVISION",
+                "value": ""
+            }
+        ],
+        "mountPoints": [
+            {
+            "readOnly": null,
+            "containerPath": "/var/logs",
+            "sourceVolume": "logs"
+            }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-create-group": "true",
+                "awslogs-group": "/ecs/${name}-mlops-practice-predictor-canary",
+                "awslogs-region": "ap-northeast-1",
+                "awslogs-stream-prefix": "ecs"
+            }
+        }
+    },
+    {
+        "name": "fluentd",
+        "image": "${fluentd_ecr_uri}:latest",
+        "environment": [
+            {
+                "name": "USER_NAME",
+                "value": "${name}"
+            }
+        ],
+        "mountPoints": [
+            {
+            "readOnly": null,
+            "containerPath": "/var/logs",
+            "sourceVolume": "logs"
+            }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-create-group": "true",
+                "awslogs-group": "/ecs/${name}-mlops-practice-predictor-canary",
+                "awslogs-region": "ap-northeast-1",
+                "awslogs-stream-prefix": "ecs"
+            }
+        }
+    }
+]

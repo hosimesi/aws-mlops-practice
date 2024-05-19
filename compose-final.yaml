@@ -1,0 +1,111 @@
+version: "3"
+
+services:
+  predictor:
+    container_name: predictor
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: local
+      args:
+        - NAME=${USER_NAME}
+    restart: always
+    tty: true
+    ports:
+      - 8080:8080
+    volumes:
+      - ./ml:/app/ml
+      - ./predictor:/app/predictor
+      - ./predictor/logs:/var/logs
+      - $HOME/.aws/credentials:/root/.aws/credentials:ro
+    entrypoint:
+      [
+        "gunicorn",
+        "-b",
+        "0.0.0.0:8080",
+        "-k",
+        "uvicorn.workers.UvicornWorker",
+        "-w",
+        "4",
+        "--access-logfile",
+        "-",
+        "--error-logfile",
+        "-",
+        "--log-level",
+        "info",
+        "--timeout",
+        "60",
+        "predictor.main:app",
+      ]
+    env_file:
+      - .env
+    environment:
+      - ENV=predictor
+    networks:
+      - mlops-practice
+
+  fluentd:
+    container_name: fluentd
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.fluentd
+    volumes:
+      - ./fluentd/local:/fluentd/etc
+      - ./predictor/logs:/var/logs
+      - $HOME/.aws:/root/.aws:ro
+    env_file:
+      - .env
+    networks:
+      - mlops-practice
+
+  prometheus:
+    container_name: prometheus
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.prometheus
+    volumes:
+      - ./prometheus/local/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - .local/prometheus:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml"
+    ports:
+      - 9090:9090
+    networks:
+      - mlops-practice
+
+  grafana:
+    container_name: grafana
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.grafana
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    ports:
+      - 3000:3000
+    volumes:
+      - .local/grafana:/var/lib/grafana
+      - ./grafana/local/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - ./grafana/local/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - mlops-practice
+
+  pushgateway:
+    container_name: pushgateway
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.pushgateway
+    ports:
+      - 9091:9091
+    networks:
+      - mlops-practice
+
+networks:
+  mlops-practice:
+    external: true

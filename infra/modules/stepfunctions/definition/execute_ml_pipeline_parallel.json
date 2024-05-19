@@ -1,0 +1,111 @@
+{
+  "Comment": "ml pipeline execution definition",
+  "StartAt": "Parallel Training",
+  "States": {
+    "Parallel Training": {
+      "Type": "Parallel",
+      "Next": "Update Server",
+      "Branches": [
+        {
+          "StartAt": "ECS RunTask sgd_classifier_ctr_model",
+          "States": {
+            "ECS RunTask sgd_classifier_ctr_model": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::ecs:runTask.sync",
+              "Parameters": {
+                "LaunchType": "FARGATE",
+                "Cluster": "${cluster_arn}",
+                "TaskDefinition": "${task_definition_arn}",
+                "NetworkConfiguration": {
+                  "AwsvpcConfiguration": {
+                    "AssignPublicIp": "DISABLED",
+                    "SecurityGroups": [
+                      "${security_group}"
+                    ],
+                    "Subnets": [
+                      "${subnet}"
+                    ]
+                  }
+                },
+                "Overrides": {
+                  "ContainerOverrides": [
+                    {
+                      "Name": "ml-pipeline",
+                      "Environment": [
+                        {
+                          "Name": "MODEL",
+                          "Value": "sgd_classifier_ctr_model"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "ECS RunTask sgd_classifier_ctr_optuna_model",
+          "States": {
+            "ECS RunTask sgd_classifier_ctr_optuna_model": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::ecs:runTask.sync",
+              "Parameters": {
+                "LaunchType": "FARGATE",
+                "Cluster": "${cluster_arn}",
+                "TaskDefinition": "${task_definition_arn}",
+                "NetworkConfiguration": {
+                  "AwsvpcConfiguration": {
+                    "AssignPublicIp": "DISABLED",
+                    "SecurityGroups": [
+                      "${security_group}"
+                    ],
+                    "Subnets": [
+                      "${subnet}"
+                    ]
+                  }
+                },
+                "Overrides": {
+                  "ContainerOverrides": [
+                    {
+                      "Name": "ml-pipeline",
+                      "Environment": [
+                        {
+                          "Name": "MODEL",
+                          "Value": "sgd_classifier_ctr_optuna_model"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "End": true
+            }
+          }
+        }
+      ]
+    },
+    "Update Server": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::ecs:runTask",
+      "Parameters": {
+        "LaunchType": "FARGATE",
+        "Cluster": "${cluster_arn}",
+        "TaskDefinition": "${update_server_task_definition_arn}",
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "DISABLED",
+            "SecurityGroups": [
+              "${security_group}"
+            ],
+            "Subnets": [
+              "${subnet}"
+            ]
+          }
+        }
+      },
+      "End": true
+    }
+  }
+}

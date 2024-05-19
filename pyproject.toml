@@ -1,0 +1,116 @@
+[tool.mypy]
+ignore_missing_imports = true
+disallow_untyped_defs = true
+exclude = [
+    "tests/*",
+    "completed/*"
+]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = "mypy-scripts.*"
+disallow_untyped_defs = false
+
+[tool.ruff]
+target-version = "py311"
+line-length = 127
+indent-width = 4
+
+lint.select = [
+    "B",  # flake8-bugbear
+    "E",  # pycodestyle error
+    "F",  # pyflakes
+    "I",  # isort
+    "UP",  # pyupgrade
+    "W",  # pycodestyle warning
+]
+lint.ignore-init-module-imports = true
+exclude = [
+    "*/__init__.py",
+    ".tox",
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    "*.pyi",
+    ".venv/*",
+    ".local/*",
+    "completed/*"
+]
+
+[tool.ruff.lint.pydocstyle]
+# for pydocstyle
+convention = "google"
+
+[tool.ruff.lint.pylint]
+max-args = 10
+
+[tool.ruff.format]
+# Like Black, indent with spaces, rather than tabs.
+exclude = ["*.pyi"]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = false
+docstring-code-line-length = "dynamic"
+
+[tool.poetry]
+name = "4-mlops-practice"
+version = "0.1.0"
+description = "2024 ai mlops"
+authors = [
+    "hosimesi <hosimesi11@gmail.com>",
+    "hosimesi <hoshii_keita@cyberagent.co.jp>"
+]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.1.1"
+ruff = "^0.3.5"
+mypy = "^1.9.0"
+taskipy = "^1.12.2"
+jupyterlab = "^4.1.6"
+pandas = "^2.2.2"
+
+
+[tool.poetry.group.predictor.dependencies]
+fastapi = "^0.110.1"
+gunicorn = "^21.2.0"
+uvicorn = "^0.29.0"
+boto3 = "^1.34.77"
+coloredlogs = "^15.0.1"
+prometheus-client = "^0.20.0"
+scikit-learn = "^1.4.1.post1"
+pydantic = "^2.6.4"
+requests = "^2.31.0"
+
+
+[tool.poetry.group.ml.dependencies]
+boto3 = "^1.34.77"
+polars = "^0.20.18"
+coloredlogs = "^15.0.1"
+prometheus-client = "^0.20.0"
+scikit-learn = "^1.4.1.post1"
+pydantic = "^2.6.4"
+optuna = "^3.6.1"
+
+
+[tool.poetry.group.importer.dependencies]
+boto3 = "^1.34.88"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.taskipy.tasks]
+update_dev = { cmd = "poetry export --without-hashes --with dev --output requirements/dev.txt", help = "update dev requirements" }
+update_ml = { cmd = "poetry export --without-hashes --with ml --output requirements/ml.txt", help = "update ml requirements" }
+update_predictor = { cmd = "poetry export --without-hashes --with predictor --output requirements/predictor.txt", help = "update predictor requirements" }
+update_importer = { cmd = "poetry export --without-hashes --with importer --output requirements/importer.txt", help = "update importer requirements" }

@@ -1,0 +1,26 @@
+[
+    {
+        "name": "grafana",
+        "image": "${grafana_ecr_uri}:latest",
+        "portMappings": [
+            {
+                "name": "grafana-3000-tcp",
+                "containerPort": 3000,
+                "hostPort": 3000,
+                "protocol": "tcp",
+                "appProtocol": "http"
+            }
+        ],
+        "essential": true,
+        "environment": [],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-create-group": "true",
+                "awslogs-group": "/ecs/${name}-mlops-practice-grafana",
+                "awslogs-region": "ap-northeast-1",
+                "awslogs-stream-prefix": "ecs"
+            }
+        }
+    }
+]

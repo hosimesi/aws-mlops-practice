@@ -1,0 +1,32 @@
+[
+    {
+        "name": "prometheus",
+        "image": "${prometheus_ecr_uri}:latest",
+        "portMappings": [
+            {
+                "name": "prometheus-9090-tcp",
+                "containerPort": 9090,
+                "hostPort": 9090,
+                "protocol": "tcp",
+                "appProtocol": "http"
+            }
+        ],
+        "essential": true,
+        "mountPoints": [
+            {
+            "readOnly": null,
+            "containerPath": "/var/logs",
+            "sourceVolume": "logs"
+            }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-create-group": "true",
+                "awslogs-group": "/ecs/${name}-mlops-practice-prometheus",
+                "awslogs-region": "ap-northeast-1",
+                "awslogs-stream-prefix": "ecs"
+            }
+        }
+    }
+]

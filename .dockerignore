@@ -1,0 +1,17 @@
+.gitignore
+docker-compose.yaml
+.env
+.env.example
+.envrc
+Makefile
+.pythons-version
+poetry.lock
+pyproject.toml
+.local/*
+*.db
+.ruff_cache/
+.mypy_cache/
+*.pkl
+tests/
+imgs/
+infra/

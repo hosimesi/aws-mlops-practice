@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  predictor:
+    container_name: predictor
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: local
+      args:
+        - NAME=${USER_NAME}
+    restart: always
+    tty: true
+    ports:
+      - 8080:8080
+    volumes:
+      - ./ml:/app/ml
+      - ./predictor:/app/predictor
+      - ./predictor/logs:/var/logs
+      - $HOME/.aws/credentials:/root/.aws/credentials:ro
+    entrypoint:
+      [
+        "gunicorn",
+        "-b",
+        "0.0.0.0:8080",
+        "-k",
+        "uvicorn.workers.UvicornWorker",
+        "-w",
+        "4",
+        "--access-logfile",
+        "-",
+        "--error-logfile",
+        "-",
+        "--log-level",
+        "info",
+        "--timeout",
+        "60",
+        "predictor.main:app",
+      ]
+    env_file:
+      - .env
+    environment:
+      - ENV=predictor
+      - SYSTEM_ENV=local
+    networks:
+      - mlops-practice
+
+networks:
+  mlops-practice:
+    external: true

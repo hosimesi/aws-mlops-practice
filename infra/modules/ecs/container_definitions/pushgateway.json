@@ -1,0 +1,25 @@
+[
+    {
+        "name": "pushgateway",
+        "image": "${pushgateway_ecr_uri}:latest",
+        "portMappings": [
+            {
+                "name": "pushgateway-9091-tcp",
+                "containerPort": 9091,
+                "hostPort": 9091,
+                "protocol": "tcp",
+                "appProtocol": "http"
+            }
+        ],
+        "essential": true,
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-create-group": "true",
+                "awslogs-group": "/ecs/${name}-mlops-practice-pushgateway",
+                "awslogs-region": "ap-northeast-1",
+                "awslogs-stream-prefix": "ecs"
+            }
+        }
+    }
+]

@@ -1,0 +1,31 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    honor_labels: true
+    static_configs:
+    - targets: ['localhost:9090']
+
+  - job_name: 'pushgateway'
+    honor_labels: true
+    static_configs:
+    # FIXME: Change this to the internal DNS name of the pushgateway service
+      - targets: ['pushgateway.{名前}-mlops-practice.internal:9091']
+
+  - job_name: 'predictor_ecs_exporter'
+    honor_labels: true
+    scrape_interval: 5s
+    metrics_path: '/metrics'
+    scheme: 'http'
+    static_configs:
+    # FIXME: Change this to the internal DNS name of the predictor service
+      - targets: ['predictor.{名前}-mlops-practice.internal:9779']
+
+  - job_name: 'predictor_canary_ecs_exporter'
+    honor_labels: true
+    static_configs:
+      # FIXME: Change this to the internal DNS name of the predictor canary service
+      - targets: ['predictor-canary.{名前}-mlops-practice.internal:9779']
+

@@ -1,0 +1,30 @@
+[
+    {
+        "name": "ml-pipeline",
+        "image": "${ml_pipeline_ecr_uri}:latest",
+        "cpu": 1024,
+        "memory": 2048,
+        "portMappings": [],
+        "essential": true,
+        "command": [
+            "python",
+            "-m",
+            "ml.main"
+        ],
+        "environment": [
+            {
+                "name": "MODEL",
+                "value": "sgd_classifier_ctr_model"
+            }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-create-group": "true",
+                "awslogs-group": "/ecs/${name}-mlops-practice-ml-pipeline",
+                "awslogs-region": "ap-northeast-1",
+                "awslogs-stream-prefix": "ecs"
+            }
+        }
+    }
+]

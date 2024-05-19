@@ -1,0 +1,5 @@
+FROM prom/prometheus:v2.51.1
+
+COPY ./prometheus/ecs/prometheus.yaml /etc/prometheus/prometheus.yaml
+
+CMD ["--config.file=/etc/prometheus/prometheus.yaml"]
