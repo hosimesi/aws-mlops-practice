@@ -10,7 +10,7 @@ Slide[japanese]: https://sample -->
 We guide you through setting up a Python development environment that ensures code quality and maintainability.
 This environment is carefully configured to enable efficient development practices and facilitate collaboration.
 
-### Parallel Train Pipeline and Model Versioning.
+### Parallel Train Pipeline and Model Versioning
 This repository includes the implementation of a training pipeline.
 This pipeline covers the stages, including data preprocessing, model training, and evaluation.
 This repository also allows multiple models to be trained in parallel and finally the inference server can be updated.
