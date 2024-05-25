@@ -153,4 +153,4 @@ Run pytest, ruff, mypy
 $ tox
 ```
 
-There are many more commands, check the Makefile.
+There are many more commands, check the Makefile.(fluentd, grafana, prometheus, canary, importer)
